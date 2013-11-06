@@ -23,6 +23,8 @@
       "pauseControls": true,    // Boolean: Pause when hovering controls, true or false
       "prevText": "Previous",   // String: Text for the "previous" button
       "nextText": "Next",       // String: Text for the "next" button
+      "prev": false,
+      "next": false,
       "maxwidth": "",           // Integer: Max-width of the slideshow, in pixels
       "navContainer": "",       // Selector: Where auto generated controls should be appended to, default is after the <ul>
       "manualControls": "",     // Selector: Declare custom pager navigation
@@ -306,20 +308,30 @@
         }
 
         // Navigation
-        if (settings.nav) {
-          var navMarkup =
-            "<a href='#' class='" + navClass + " prev'>" + settings.prevText + "</a>" +
-            "<a href='#' class='" + navClass + " next'>" + settings.nextText + "</a>";
+        if (settings.nav || settings.prev || settings.next) {
+          var $trigger, $prev;
 
-          // Inject navigation
-          if (options.navContainer) {
-            $(settings.navContainer).append(navMarkup);
-          } else {
-            $this.after(navMarkup);
+          // Navigation elements exists
+          if (settings.prev || settings.next) {
+            $prev = settings.prev || $();
+            $trigger = $prev.add(settings.next|| $());
           }
 
-          var $trigger = $("." + namespaceIdx + "_nav"),
+          // Create navigation elements
+          else {
+            var navMarkup =
+              "<a href='#' class='" + navClass + " prev'>" + settings.prevText + "</a>" +
+              "<a href='#' class='" + navClass + " next'>" + settings.nextText + "</a>";
+
+            // Inject navigation
+            if (options.navContainer) {
+              $(settings.navContainer).append(navMarkup);
+            } else {
+              $this.after(navMarkup);
+            }
+            $trigger = $("." + namespaceIdx + "_nav");
             $prev = $trigger.filter(".prev");
+          }
 
           // Click event handler
           $trigger.bind("click", function (e) {
